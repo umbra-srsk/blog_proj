@@ -6,7 +6,9 @@ from django.contrib.auth.hashers import make_password, check_password
 from datetime import datetime
 from django.db.models import Q
 from django.http import JsonResponse
-import math
+from . import calc_latlng
+import requests
+import json
 
 
 def index(request):
@@ -200,25 +202,60 @@ def logout(request):
 
 def weather(request):
     if request.method == 'POST':
-        lat = request.POST.get("lat")
-        lng = request.POST.get("lng")
+        data = json.loads(request.body)
+        lat = data.get('lat')
+        lng = data.get('lng')
+
+    
+    api_latlng = None
+
+    if lat is not None and lng is not None:
+        api_latlng = calc_latlng.mapToGrid(lat, lng)
 
 
     now = datetime.now()
-    url = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0"
+    url = 'http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst'
     params = {
         'ServiceKey' : 'vDPsHfRauBIF+jBMpO/ec6aUByTVO02YSht+oAdhZoLORXaMfX8XXWTG0PNuIV6NG8EHDi+4yfaKhFeG1vJmKw==',
-        'base_date' : '20230711' ,
-        'base_time' : '0600' ,
-        'nx' : lat,
-        'ny' : lng
+        'pageNo' : '1',
+        'numOfRows' : '12',
+        'dataType' : 'JSON',
+        'base_date' : str(now.year)+'0'+str(now.month)+str(now.day),
+        'base_time' : str(now.hour - 2)+'00',
+        'nx' : api_latlng[0],
+        'ny' : api_latlng[1]
     }
 
 
+    '''
+    'nx' : api_latlng[0],
+    'ny' : api_latlng[1]
+    '''
 
 
+    response = requests.get(url, params=params)
+
+    items = response.json().get('response').get('body').get('items')
+
+    weather_data = dict()
+
+    for item in items['item']:
+        # 기온
+        if item['category'] == 'T1H':
+            weather_data['tmp'] = item['obsrValue']
+        # 습도
+        if item['category'] == 'REH':
+            weather_data['hum'] = item['obsrValue']
+        # 1시간 동안 강수량
+        if item['category'] == 'RN1':
+            weather_data['rain'] = item['obsrValue']
+
+    print(weather_data)
+
+    return JsonResponse(weather_data)
 
 
 
 def search(request):
     pass    
+

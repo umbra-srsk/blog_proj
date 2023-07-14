@@ -77,18 +77,30 @@
     <br>
     <br>
     <br>
-    <a href="{% url 'register' %}">회원가입</a>
+    <!--<a href="{% url 'register' %}">회원가입</a>-->
+    <input type="button" value="회원가입" onclick="location.href='/register'">
     <br>
     {% if not request.session.myname %}
-        <a href="{% url 'login' %}">로그인</a>
+        <!--<a href="{% url 'login' %}">로그인</a>-->
+        <input type="button" value="로그인" onclick="location.href='/login'">
     {% else %}
-        <a href="{% url 'logout' %}">로그아웃</a>
+        <!--<a href="{% url 'logout' %}">로그아웃</a>-->
+        <input type="button" value="로그아웃" onclick="location.href='/logout'">
     {% endif %}
 
 
     <div id="map" style="width:500px;height:500px;"></div>
     <p><em>지도를 클릭해주세요!</em></p> 
     <div id="clickLatlng"></div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $.ajaxSetup({
+          headers: { "X-CSRFToken": '{{csrf_token}}' }
+        });
+    </script>
+
 
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=ed91634381b7ff17555d43346b513cef"></script>
     <script>
@@ -117,26 +129,29 @@
         
         // 마커 위치를 클릭한 위치로 옮깁니다
         marker.setPosition(latlng);
+
+        var lat = latlng.getLat()
+        var lng = latlng.getLng()
         
-        var message = '클릭한 위치의 위도는 ' + latlng.getLat() + ' 이고, ';
-        message += '경도는 ' + latlng.getLng() + ' 입니다';
+        var message = '클릭한 위치의 위도는 ' + lat + ' 이고, ';
+        message += '경도는 ' + lng + ' 입니다';
         
         var resultDiv = document.getElementById('clickLatlng'); 
         resultDiv.innerHTML = message;
-        
-        /*
-        var lat = latlng.getLat();
-        var lng = latlng.getLng();
 
         var data = {
             lat: lat,
             lng: lng
         };
 
+        console.log(lat);
+        console.log(lng);
+
         $.ajax({
-            url: "/your-django-api-url/",
+            url: "/weather/",
             type: "POST",
-            data: data,
+            data: JSON.stringify(data),
+            contentType: "application/json",
             success: function(response) {
                 // Handle the response from Django API
                 console.log(response);
@@ -145,13 +160,53 @@
                 // Handle any errors
                 console.error(xhr.responseText);
             }
-        
-    });
-    
-    */
+        })
     
 });
-    
+
 </script>
+
+<!--
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            url: '/weather/',
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                $('#tmp').text(response.tmp);
+                $('#hum').text(response.hum);
+                $('#rain').text(response.rain);
+            }
+        });
+    });
+
+</script>
+
+
+
+    <p>기온: <span id="tmp"></span></p>
+    <p>습도: <span id="hum"></span></p>
+    <p>비: <span id="rain"></span></p>
+
+-->
+    <script>
+        $(document).ready(function() {
+            $.ajax({
+                url: '/weather/',
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    var tmpElement = document.getElementById('tmp');
+                    var humElement = document.getElementById('hum');
+                    var rainElement = document.getElementById('rain');
+
+                    tmpElement.innerHTML = '기온: <span>' + response.tmp + '</span>';
+                    humElement.innerHTML = '습도: <span>' + response.hum + '</span>';
+                    rainElement.innerHTML = '비: <span>' + response.rain + '</span>';
+                }
+            });
+        });
+    </script>
 </body>
 </html>
