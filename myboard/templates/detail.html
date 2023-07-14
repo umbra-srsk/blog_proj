@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>게시글보기</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ccc;
+        }
+
+        th {
+            background-color: palegoldenrod;
+        }
+
+        textarea {
+            width: 100%;
+            resize: none;
+        }
+
+        input[type="text"], textarea {
+            padding: 5px;
+            background-color: bisque;
+        }
+
+        input[type="button"] {
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        input[type="button"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Detail</h1>
+
+    <table border="1">
+        <tr>
+            <th>작성자</th>
+            <td><input type="text" readonly value="{{ dto.myname }}"></td>
+        </tr>
+        <tr>
+            <th>제목</th>
+            <td><input type="text" readonly value="{{ dto.mytitle }}"></td>
+        </tr>
+        <tr>
+            <th>내용</th>
+            <td><textarea cols="60" rows="10" readonly>{{ dto.mycontent }}</textarea></td>
+        </tr>
+            <td colspan="2" align="right">
+                <input type="button" value="목록" onclick="location.href='/'">
+                <input type="button" value="수정" onclick="location.href='{% url 'update' dto.id %}'">
+                <input type="button" value="삭제" onclick="location.href='{% url 'delete' dto.id %}'">
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>수정하기</title>
+    <style>
+        <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ccc;
+        }
+
+        th {
+            background-color: #e0e0e0;
+        }
+
+        textarea {
+            width: 100%;
+            resize: none;
+        }
+
+        input[type="text"], textarea {
+            padding: 5px;
+            border: 1px solid #ccc;
+        }
+
+        input[type="text"]:read-only {
+            background-color: #f2f2f2;
+        }
+
+        input[type="button"], input[type="submit"] {
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        input[type="button"]:hover, input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    </style>
+</head>
+<body>
+
+    <h1>Update</h1>
+
+    <form action="{% url 'update' dto.id %}" method="post">{% csrf_token %}
+        <!-- <input type="hidden" name="id" value="{{ dto.id }}"> -->
+        <table border="1">
+            <tr>
+                <th>작성자</th>
+                <td><input type="text" value="{{ dto.myname }}" readonly></td>
+            </tr>
+            <tr>
+                <th>제목</th>
+                <td><input type="text" value="{{ dto.mytitle }}" name="mytitle"></td>
+            </tr>
+            <tr>
+                <th>내용</th>
+                <td><textarea cols="60" rows="10" name="mycontent">{{ dto.mycontent }}</textarea></td>
+            </tr>
+            <tr>
+                <td colspan="2" align="right">
+                    <input type="button" value="취소" onclick="location.href='/'">
+                    <input type="submit" value="수정">
+                </td>
+            </tr>
+        </table>
+
+    </form>
+
+
+</body>
+</html>
+
