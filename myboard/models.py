@@ -20,8 +20,11 @@ class MyMember(models.Model):
         return str({'myname': self.myname, 'mypassword': self.mypassword, 'myemail': self.myemail})
     
 
-'''
-class Coment(models.Model):
+class Reply(models.Model):
+    session_id = models.CharField(max_length=100)
+    content = models.TextField(max_length=200)
+    dateTime = models.TextField(max_length=100)
 
-'''
+    def __str__(self):
+        return f"Reply {self.id}"
 

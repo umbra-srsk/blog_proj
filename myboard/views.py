@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import MyBoard, MyMember
+from .models import MyBoard, MyMember, Reply
 from django.utils import timezone
 from django.core.paginator import Paginator
 from django.contrib.auth.hashers import make_password, check_password
@@ -9,6 +9,7 @@ from django.http import JsonResponse
 from . import calc_latlng
 import requests
 import json
+from django.contrib.auth.models import User
 
 
 def index(request):
@@ -159,9 +160,14 @@ def register(request):
         mypassword = request.POST['mypassword']
         myemail = request.POST['myemail']
 
+        if MyMember.objects.filter(myname=myname).exists():
+            return render(request, 'register.html', {'error': '이미 존재하는 이름 입니다'})
+
         #mymember = MyMember(myname=myname, mypassword=mypassword, myemail=myemail)
         mymember = MyMember(myname=myname, mypassword=make_password(mypassword), myemail=myemail)
         mymember.save()
+
+        
 
         return redirect('/')
 
@@ -174,14 +180,19 @@ def login(request):
         mypassword = request.POST['mypassword']
         
 
-        mymember = MyMember.objects.get(myname=myname)
+        try:
+            mymember = MyMember.objects.get(myname=myname)
+        except MyMember.DoesNotExist:
+            return render(request, 'login.html', {'error': '잘못된 이름 또는 비밀번호 입니다'})
+        
 
         if check_password(mypassword, mymember.mypassword):
              request.session['myname'] = mymember.myname
              return redirect('/')
         
         else:
-            return redirect('login')
+            #return redirect('login')
+            return render(request, 'login', {'error': '잘못된 이름 또는 비밀번호 입니다'})
 
 '''
         if mypassword == mymember.mypassword:
@@ -259,3 +270,26 @@ def weather(request):
 def search(request):
     pass    
 
+
+def reply(request):
+
+    data = json.loads(request.body)
+    session_id = data.get('sessionId')
+    content = data.get('content')
+    dateTime = data.get('dateTime')
+
+    print(session_id)
+    print(content)
+    print(dateTime)
+
+    print(type(data))
+
+    #session_id = request.POST['sessionID']
+    #content = request.POST['content']
+    #datetime = request.POST['dateTime']
+    # Create a new Reply object
+    reply = Reply(session_id=session_id, content=content, dateTime=dateTime)
+    reply.save()
+    
+    # Return a JSON response indicating success
+    return JsonResponse(data)

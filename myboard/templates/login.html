@@ -58,6 +58,12 @@
 
     </form>
 
+    {% if error %}
+        <script>
+            alert("{{ error }}");
+        </script>
+    {% endif %}
+
 
 </body>
 </html>

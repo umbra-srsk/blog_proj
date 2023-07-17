@@ -42,8 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'myboard',
-    'sslserver',
-    'django_extensions',
+    #'sslserver',
+    #'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -83,7 +83,7 @@ WSGI_APPLICATION = 'myboard.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'mysql',
+        'NAME': 'myboard',
         'USER': 'root',
         'PASSWORD': '1234',
         'HOST': 'localhost',
@@ -154,3 +154,9 @@ runserver.run = monkey_patch_run
 
 '''
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+SSL_CERTIFICATE = 'C:/ssl/localhost.crt'
+SSL_PRIVATE_KEY = 'C:/ssl/localhost.key'

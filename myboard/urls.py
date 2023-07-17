@@ -32,5 +32,6 @@ urlpatterns = [
     path('login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
     path('weather/', views.weather, name = 'weather'),
+    path('reply/', views.reply, name = 'reply'),
 
 ]
