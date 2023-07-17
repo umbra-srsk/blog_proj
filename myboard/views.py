@@ -221,12 +221,12 @@ def weather(request):
         'numOfRows' : '12',
         'dataType' : 'JSON',
         'base_date' : str(now.year)+'0'+str(now.month)+str(now.day),
-        'base_time' : str(now.hour - 2)+'00',
+        'base_time' : '0' + str(now.hour - 3)+'00',
         'nx' : api_latlng[0],
         'ny' : api_latlng[1]
     }
 
-
+    print(params)
     '''
     'nx' : api_latlng[0],
     'ny' : api_latlng[1]

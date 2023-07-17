@@ -9,6 +9,7 @@
 <body>
 
     <h1>Hello, {{ request.session.myname | default:'Stranger' }} Welcome</h1>
+    
 
     <table border="1">
         <col width="50">
@@ -153,18 +154,35 @@
             data: JSON.stringify(data),
             contentType: "application/json",
             success: function(response) {
-                // Handle the response from Django API
+
+
                 console.log(response);
+
+                var tmpElement = document.getElementById('tmp');
+                var humElement = document.getElementById('hum');
+                var rainElement = document.getElementById('rain');
+
+                tmpElement.innerHTML = '기온: <span>' + response.tmp + '</span>';
+                humElement.innerHTML = '습도: <span>' + response.hum + '</span>';
+                rainElement.innerHTML = '비: <span>' + response.rain + '</span>';
+
+
+
+
             },
             error: function(xhr, status, error) {
-                // Handle any errors
                 console.error(xhr.responseText);
             }
         })
+
     
 });
 
 </script>
+
+<div id="tmp"></div>
+<div id="hum"></div>
+<div id="rain"></div>
 
 <!--
 <script>
@@ -190,6 +208,9 @@
     <p>비: <span id="rain"></span></p>
 
 -->
+
+
+<!--
     <script>
         $(document).ready(function() {
             $.ajax({
@@ -197,6 +218,8 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function(response) {
+
+                    console.log(response);
                     var tmpElement = document.getElementById('tmp');
                     var humElement = document.getElementById('hum');
                     var rainElement = document.getElementById('rain');
@@ -204,9 +227,17 @@
                     tmpElement.innerHTML = '기온: <span>' + response.tmp + '</span>';
                     humElement.innerHTML = '습도: <span>' + response.hum + '</span>';
                     rainElement.innerHTML = '비: <span>' + response.rain + '</span>';
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
                 }
             });
         });
     </script>
+
+-->
+
+
+
 </body>
 </html>
