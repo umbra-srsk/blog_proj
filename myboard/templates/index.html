@@ -43,6 +43,13 @@
             </td>
         </tr>
     </table>
+
+    <form method="GET" action="{% url 'result' %}">
+        <input type="text" name="query" placeholder="검색어 입력">
+        <button type="submit">검색</button>
+    </form>
+    <br>
+
     <!--처음으로-->
     <a href="?page=1">처음</a>
     <!-- 이전 -->
@@ -88,7 +95,6 @@
         <!--<a href="{% url 'logout' %}">로그아웃</a>-->
         <input type="button" value="로그아웃" onclick="location.href='/logout'">
     {% endif %}
-
 
     <div id="map" style="width:500px;height:500px;"></div>
     <p><em>지도를 클릭해주세요!</em></p> 
@@ -198,8 +204,15 @@
             type: "POST",
             data: JSON.stringify(data),
             contentType: "application/json",
+
+            beforeSend: function() {
+                // Display loading message before the AJAX request
+                $("#loading-message").show();
+            },
+
             success: function(response) {
 
+                $("#loading-message").hide();
 
                 console.log(response);
 
@@ -225,63 +238,13 @@
 
 </script>
 
+<div id="loading-message" class="loading-message">
+    <p>Loading...</p>
+</div>
+
 <div id="tmp"></div>
 <div id="hum"></div>
 <div id="rain"></div>
-
-<!--
-<script>
-    $(document).ready(function() {
-        $.ajax({
-            url: '/weather/',
-            type: 'GET',
-            dataType: 'json',
-            success: function(response) {
-                $('#tmp').text(response.tmp);
-                $('#hum').text(response.hum);
-                $('#rain').text(response.rain);
-            }
-        });
-    });
-
-</script>
-
-
-
-    <p>기온: <span id="tmp"></span></p>
-    <p>습도: <span id="hum"></span></p>
-    <p>비: <span id="rain"></span></p>
-
--->
-
-
-<!--
-    <script>
-        $(document).ready(function() {
-            $.ajax({
-                url: '/weather/',
-                type: 'GET',
-                dataType: 'json',
-                success: function(response) {
-
-                    console.log(response);
-                    var tmpElement = document.getElementById('tmp');
-                    var humElement = document.getElementById('hum');
-                    var rainElement = document.getElementById('rain');
-
-                    tmpElement.innerHTML = '기온: <span>' + response.tmp + '</span>';
-                    humElement.innerHTML = '습도: <span>' + response.hum + '</span>';
-                    rainElement.innerHTML = '비: <span>' + response.rain + '</span>';
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText);
-                }
-            });
-        });
-    </script>
-
--->
-
 
 
 </body>

@@ -50,6 +50,30 @@
         input[type="button"]:hover {
             background-color: #0056b3;
         }
+
+        #replies {
+            margin-top: 20px;
+            list-style: none;
+            padding: 0;
+        }
+
+        #replies li {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #replies li button {
+            padding: 5px 10px;
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -87,59 +111,117 @@
                 <textarea id="reply-content" cols="60" rows="1"></textarea>
                 <input type="button" value="등록" onclick="submitReply()">
             </td>
-            {% endif %}
+            
         </tr>
 
-
-
     </table>
+    
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <script>
-        $.ajaxSetup({
-          headers: { "X-CSRFToken": '{{csrf_token}}' }
-        });
-    </script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
-    function submitReply() {
-        var sessionId = "{{ request.session.myname }}"; // Assuming the session ID is passed to the HTML template
-        var content = $('#reply-content').val();
-        var dateTime = new Date().toISOString();
+    $.ajaxSetup({
+        headers: { "X-CSRFToken": '{{csrf_token}}' }
+    });
+</script>
 
-        console.log(sessionId, content, dateTime);
+<script>
+    $(document).ready(function() {
+        loadReplies();
 
-        // Prepare the data to be sent
-        var data = JSON.stringify({
-            sessionId: sessionId,
-            content: content,
-            dateTime: dateTime
+        $(document).on('click', '.delete-reply-btn', function() {
+            var replyId = $(this).data('reply-id');
+            deleteReply(replyId);
         });
+    });
 
-        // Make the AJAX request using $.ajax
+    function loadReplies() {
+        var postID = {{ dto.id }};
         $.ajax({
-            url: '/reply/',
-            type: 'POST',
-            contentType: 'application/json',
-            data: data,
+            type: 'GET',
+            url: '/get_replies/' + postID + '/',
             success: function(response) {
-                alert('Reply submitted successfully!');
-                
+                if (response.success) {
+                    var replies = response.replies;
+                    for (var i = 0; i < replies.length; i++) {
+                        var reply = replies[i];
+                        var replyItem = $('<div>').addClass('reply-item').append(
+                            $('<div>').addClass('reply-author').text('글쓴이:' + reply.author),
+                            $('<div>').addClass('reply-content').text('내용:' + reply.content),
+                            $('<button>').addClass('delete-reply-btn').text('삭제').attr('data-reply-id', reply.id)
+                        );
+                        $('#replies').append(replyItem);
+                    }
+                }
             },
-            error: function(xhr, status, error) {
-                // Handle any errors that occurred during the request
-                console.error('An error occurred:', error);
+            error: function(xhr, errmsg, err) {
+                console.log(xhr.status + ': ' + xhr.responseText);
             }
         });
     }
+
+    function deleteReply(replyId) {
+        console.log('Delete reply function called with replyId:', replyId);
+        $.ajax({
+            type: 'POST',
+            url: '/delete_reply/' + replyId + '/',
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Remove the deleted reply from the DOM
+                    $('[data-reply-id="' + replyId + '"]').closest('.reply-item').remove();
+                } else {
+                    alert('Failed to delete reply.');
+                }
+            },
+            error: function(xhr, errmsg, err) {
+                console.log(xhr.status + ': ' + xhr.responseText);
+            }
+        });
+    }
+
+    function submitReply() {
+        var replyContent = $('#reply-content').val();
+        var postID = {{ dto.id }};
+
+        console.log(replyContent, postID)
+
+        $.ajax({
+            type: 'POST',
+            url: '{% url "add_reply" %}',
+            data: {
+                'content': replyContent,
+                'post_id': postID,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                if (response.success) {
+                    var replyItem = $('<div>').addClass('reply-item').append(
+                        $('<div>').addClass('reply-author').text(response.author),
+                        $('<div>').addClass('reply-content').text(response.content),
+                        $('<button>').addClass('delete-reply-btn').text('Delete').attr('data-reply-id', response.id)
+                    );
+                    $('#replies').append(replyItem);
+                    $('#reply-content').val('');
+                } else {
+                    alert('Failed to add reply.');
+                }
+            },
+            error: function(xhr, errmsg, err) {
+                console.log(xhr.status + ': ' + xhr.responseText);
+            }
+        });
+    }   
 </script>
 
+<h2>Replies</h2>
+<div id="replies"></div>
 
 
-
-
-
+{% endif %}
 
     
 

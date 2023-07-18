@@ -1,0 +1,12 @@
+<!-- result.html -->
+{% if posts %}
+  <h2>검색 결과</h2>
+  <ul>
+    {% for post in posts %}
+      <!-- <li>{{ post.mytitle }}</li> -->
+      <li><a href="{% url 'detail' post.id %}">{{ post.mytitle }}</a></li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>검색 결과가 없습니다.</p>
+{% endif %}

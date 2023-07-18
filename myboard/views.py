@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import MyBoard, MyMember, Reply
 from django.utils import timezone
 from django.core.paginator import Paginator
@@ -10,6 +10,7 @@ from . import calc_latlng
 import requests
 import json
 from django.contrib.auth.models import User
+from django.views.generic import ListView
 
 
 def index(request):
@@ -85,10 +86,13 @@ def insert_res(request):
         return redirect('insert')
 """
 
+
 def detail(request, id):
     myboard_one = MyBoard.objects.get(id=id)
     print(myboard_one)
     return render(request, 'detail.html', {'dto': myboard_one})
+
+
 
 def update_proc(request, id):
     if request.method == 'GET':
@@ -232,7 +236,7 @@ def weather(request):
         'numOfRows' : '12',
         'dataType' : 'JSON',
         'base_date' : str(now.year)+'0'+str(now.month)+str(now.day),
-        'base_time' : '0' + str(now.hour - 3)+'00',
+        'base_time' : '0' + str(now.hour - 1)+'00',
         'nx' : api_latlng[0],
         'ny' : api_latlng[1]
     }
@@ -265,31 +269,106 @@ def weather(request):
 
     return JsonResponse(weather_data)
 
+'''
+def add_reply(request):
+    if request.method == 'POST':
+        post_id = request.POST.get('post_id')
+        author = request.session.get('myname')
+        content = request.POST.get('content')
 
+        print(post_id), print(author), print(content)
 
-def search(request):
-    pass    
+        if post_id and author and content:
+            myboard = get_object_or_404(MyBoard, id=post_id)
+            print(myboard)
 
+            if not author:
+                return JsonResponse({'success': False, 'message': '로그인이 필요합니다.'})
 
-def reply(request):
+            reply = Reply.objects.create(myboard=myboard, author=author, content=content)
 
-    data = json.loads(request.body)
-    session_id = data.get('sessionId')
-    content = data.get('content')
-    dateTime = data.get('dateTime')
-
-    print(session_id)
-    print(content)
-    print(dateTime)
-
-    print(type(data))
-
-    #session_id = request.POST['sessionID']
-    #content = request.POST['content']
-    #datetime = request.POST['dateTime']
-    # Create a new Reply object
-    reply = Reply(session_id=session_id, content=content, dateTime=dateTime)
-    reply.save()
+            return JsonResponse({'success': True, 'author': author, 'content': content})
     
-    # Return a JSON response indicating success
-    return JsonResponse(data)
+    return JsonResponse({'success': False, 'message': '잘못된 요청입니다.'})
+
+'''
+
+
+def add_reply(request):
+    if request.method == 'POST':
+        post_id = request.POST.get('post_id')
+        author = request.session.get('myname')
+        content = request.POST.get('content')
+
+        if post_id and author and content:
+            myboard = get_object_or_404(MyBoard, id=post_id)
+
+            if not author:
+                return JsonResponse({'success': False, 'message': '로그인이 필요합니다.'})
+
+            reply = Reply.objects.create(myboard=myboard, author=author, content=content)
+
+            return JsonResponse({
+                'success': True,
+                'id': reply.id,  # Send the Reply.id in the response
+                'author': author,
+                'content': content
+            })
+
+    return JsonResponse({'success': False, 'message': '잘못된 요청입니다.'})
+
+
+def get_replies(request, id):
+    myboard_one = get_object_or_404(MyBoard, id=id)
+    replies = Reply.objects.filter(myboard=myboard_one)
+    reply_list = []
+    for reply in replies:
+        reply_data = {
+            'id': reply.id,
+            'author': reply.author,
+            'content': reply.content
+        }
+        reply_list.append(reply_data)
+    return JsonResponse({'success': True, 'replies': reply_list})
+
+def delete_reply(request, reply_id):
+    reply = get_object_or_404(Reply, id=reply_id)
+    reply.delete()
+    return JsonResponse({'success': True})
+
+    
+def search(request):
+    query = request.GET.get('q')
+
+    if query:
+        posts = MyBoard.objects.filter(mytitle__icontains=query)
+    else:
+        posts = MyBoard.objects.all()
+
+    return render(request, 'search.html', {'posts': posts})
+
+class PostListView(ListView):
+    model = MyBoard
+    template_name = 'post_list.html'
+    context_object_name = 'posts'
+    paginate_by = 5 # 페이지당 게시글 수 설정
+
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        if query:
+            queryset = MyBoard.objects.filter(title__icontains = query)
+        else:
+            queryset = MyBoard.objects.all()
+        return queryset
+    
+def result(request):
+    query = request.GET.get('query')
+
+    if query:
+        posts = MyBoard.objects.filter(Q(mytitle__icontains=query) | Q(mycontent__icontains=query))
+
+    else:
+        posts = MyBoard.objects.all()
+
+    return render(request, 'result.html', {'posts':posts})
+    

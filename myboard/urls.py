@@ -32,6 +32,12 @@ urlpatterns = [
     path('login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
     path('weather/', views.weather, name = 'weather'),
-    path('reply/', views.reply, name = 'reply'),
+    #path('post/<int:post_id>/', views.post_detail, name='post_detail'),
+    path('add_reply/', views.add_reply, name='add_reply'),
+    path('get_replies/<int:id>/', views.get_replies, name='get_replies'),
+    path('delete_reply/<int:reply_id>/', views.delete_reply, name='delete_reply'),
+    path('result/', views.result, name = 'result'),
+    path('posts/', views.PostListView.as_view(), name ='post_list'),
 
 ]
+

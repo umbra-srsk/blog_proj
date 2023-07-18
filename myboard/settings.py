@@ -14,7 +14,7 @@ from pathlib import Path
 import os
 
 import sys
-from django.core.management.commands.runserver import Command as runserver
+#from django.core.management.commands.runserver import Command as runserver
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -140,6 +140,9 @@ GRAPH_MODELS = {
 }
 
 
+
+
+
 '''
 runserver.default_addr = "127.0.0.1"
 runserver.default_port = "8000"
@@ -154,9 +157,9 @@ runserver.run = monkey_patch_run
 
 '''
 
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+#SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+#SESSION_COOKIE_SECURE = True
+#CSRF_COOKIE_SECURE = True
 
-SSL_CERTIFICATE = 'C:/ssl/localhost.crt'
-SSL_PRIVATE_KEY = 'C:/ssl/localhost.key'
+#SSL_CERTIFICATE = 'C:/ssl/localhost.crt'
+#SSL_PRIVATE_KEY = 'C:/ssl/localhost.key'
