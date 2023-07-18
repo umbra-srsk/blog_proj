@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'myboard',
     #'sslserver',
-    #'django_extensions',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [

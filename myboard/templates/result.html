@@ -1,12 +1,60 @@
-<!-- result.html -->
-{% if posts %}
-  <h2>검색 결과</h2>
-  <ul>
-    {% for post in posts %}
-      <!-- <li>{{ post.mytitle }}</li> -->
-      <li><a href="{% url 'detail' post.id %}">{{ post.mytitle }}</a></li>
-    {% endfor %}
-  </ul>
-{% else %}
-  <p>검색 결과가 없습니다.</p>
-{% endif %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Result Page</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    h2 {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      margin-bottom: 5px;
+    }
+
+    a {
+      color: #337ab7;
+      text-decoration: none;
+    }
+
+    p {
+      font-size: 14px;
+    }
+
+    /* Specific Styles */
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  {% if posts %}
+    <div class="container">
+      <h2>검색 결과</h2>
+      <ul>
+        {% for post in posts %}
+          <!-- <li>{{ post.mytitle }}</li> -->
+          <li><a href="{% url 'detail' post.id %}">{{ post.mytitle }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% else %}
+    <div class="container">
+      <p>검색 결과가 없습니다.</p>
+    </div>
+  {% endif %}
+</body>
+</html>

@@ -64,7 +64,11 @@
         <table border="1">
             <tr>
                 <th>작성자</th>
+                {% if not request.session.myname %}
                 <td><input type="text" name="myname"></td>
+                {% else %}
+                <td><input type="text" name ="myname" value = "{{ request.session.myname }}" readonly></td>
+                {% endif %}
             </tr>
             <tr>
                 <th>제목</th>

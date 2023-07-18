@@ -200,9 +200,9 @@
             success: function(response) {
                 if (response.success) {
                     var replyItem = $('<div>').addClass('reply-item').append(
-                        $('<div>').addClass('reply-author').text(response.author),
-                        $('<div>').addClass('reply-content').text(response.content),
-                        $('<button>').addClass('delete-reply-btn').text('Delete').attr('data-reply-id', response.id)
+                        $('<div>').addClass('reply-author').text('글쓴이:' + response.author),
+                        $('<div>').addClass('reply-content').text('내용: ' + response.content),
+                        $('<button>').addClass('delete-reply-btn').text('삭제').attr('data-reply-id', response.id)
                     );
                     $('#replies').append(replyItem);
                     $('#reply-content').val('');
@@ -217,7 +217,7 @@
     }   
 </script>
 
-<h2>Replies</h2>
+<h2>댓글</h2>
 <div id="replies"></div>
 
 
