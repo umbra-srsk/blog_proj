@@ -105,6 +105,7 @@
             
             <th>답글</th>
             {% if not request.session.myname %}
+          
             <td>로그인이 필요합니다</td>
             {% else %}
             <td>
@@ -160,9 +161,10 @@
             }
         });
     }
-
+</script>
+<script>
     function deleteReply(replyId) {
-        console.log('Delete reply function called with replyId:', replyId);
+        
         $.ajax({
             type: 'POST',
             url: '/delete_reply/' + replyId + '/',
@@ -171,7 +173,7 @@
             },
             success: function(response) {
                 if (response.success) {
-                    // Remove the deleted reply from the DOM
+
                     $('[data-reply-id="' + replyId + '"]').closest('.reply-item').remove();
                 } else {
                     alert('Failed to delete reply.');

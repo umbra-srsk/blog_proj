@@ -22,33 +22,7 @@ def index(request):
     
     #페이지에 맞는 모델
     page_obj = paginator.get_page(page_num)
-    print(type(page_obj))
-
-    #총 모델 수
-    print(page_obj.count)
-    #총 페이지 수
-    print(page_obj.paginator.num_pages)
-    #총 페이지 range 객체
-    print(page_obj.paginator.page_range)
-    #다음 페이지 유무
-    print(page_obj.has_next())
-    #이전 페이지 유무
-    print(page_obj.has_previous())
-
-    try:
-        #다음 페이지 숫자(없으면 에러)
-        print(page_obj.next_page_number())
-        #이전 페이지 숫자
-        print(page_obj.previous_page_number())
-
-    except:
-        pass
-    #
-    print(page_obj.start_index())
-    #
-    print(page_obj.end_index())
-
-
+ 
     return render(request, 'index.html', {'list': page_obj})
 
 def insert_proc(request):
@@ -58,7 +32,7 @@ def insert_proc(request):
         myname = request.POST['myname']
         mytitle = request.POST['mytitle']
         mycontent = request.POST['mycontent']
-
+        
         result = MyBoard.objects.create(myname=myname, mytitle=mytitle, mycontent=mycontent, mydate=timezone.now())
         print(result)
 
@@ -261,7 +235,7 @@ def weather(request):
         # 습도
         if item['category'] == 'REH':
             weather_data['hum'] = item['obsrValue']
-        # 1시간 동안 강수량
+        # 강수량
         if item['category'] == 'RN1':
             weather_data['rain'] = item['obsrValue']
 
