@@ -19,17 +19,7 @@ class MyMember(models.Model):
     def __str__(self):
         return str({'myname': self.myname, 'mypassword': self.mypassword, 'myemail': self.myemail})
     
-'''
-class Reply(models.Model):
-    myboard = models.ForeignKey(MyBoard, on_delete=models.CASCADE)
-    author = models.CharField(max_length=100)
-    content = models.CharField(max_length=2000)
-    reply_date = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return str({'myboard_id': self.myboard_id, 'author': self.author, 'content': self.content, 'reply_date': self.reply_date})
-    
-'''
 
 
 class Reply(models.Model):

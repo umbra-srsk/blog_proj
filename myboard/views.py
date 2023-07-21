@@ -22,13 +22,15 @@ def index(request):
     
     #페이지에 맞는 모델
     page_obj = paginator.get_page(page_num)
- 
+
     return render(request, 'index.html', {'list': page_obj})
 
 def insert_proc(request):
+
     if request.method == 'GET':
         return render(request, 'insert.html')
     else:
+
         myname = request.POST['myname']
         mytitle = request.POST['mytitle']
         mycontent = request.POST['mycontent']
@@ -69,14 +71,17 @@ def detail(request, id):
 
 
 def update_proc(request, id):
+    
     if request.method == 'GET':
         myboard_one = MyBoard.objects.get(id=id)
         print(myboard_one)
         return render(request, 'update.html', {'dto': myboard_one})
     else:
+    
         mytitle = request.POST['mytitle']
         mycontent = request.POST['mycontent']
         #id = request.POST['id']
+
 
         myboard = MyBoard.objects.filter(id=id)
         print(myboard)
@@ -115,13 +120,6 @@ def update_res(request):
 
 def delete_proc(request, id):
     result_delete = MyBoard.objects.filter(id=id).delete()
-    #print(result_delete)
-    '''
-        myboard = MyBoard.objects.get(id=id)
-        myboard.mytitle = mytitle
-        myboard.mycontent = mycontent
-        myboard.save()
-    '''
 
     if result_delete[0]:
         return redirect('index')
@@ -143,7 +141,7 @@ def register(request):
 
         #mymember = MyMember(myname=myname, mypassword=mypassword, myemail=myemail)
         mymember = MyMember(myname=myname, mypassword=make_password(mypassword), myemail=myemail)
-        mymember.save()
+        mymember.save() 
 
         
 
@@ -204,13 +202,17 @@ def weather(request):
 
     now = datetime.now()
     url = 'http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst'
+    if now.hour < 10:
+        time_weather = '0' + str(now.hour - 1) + '00'
+    else:
+        time_weather = str(now.hour - 1) + '00'
     params = {
         'ServiceKey' : 'vDPsHfRauBIF+jBMpO/ec6aUByTVO02YSht+oAdhZoLORXaMfX8XXWTG0PNuIV6NG8EHDi+4yfaKhFeG1vJmKw==',
         'pageNo' : '1',
         'numOfRows' : '12',
         'dataType' : 'JSON',
         'base_date' : str(now.year)+'0'+str(now.month)+str(now.day),
-        'base_time' : '0' + str(now.hour - 1)+'00',
+        'base_time' :time_weather,
         'nx' : api_latlng[0],
         'ny' : api_latlng[1]
     }
@@ -321,6 +323,7 @@ def search(request):
 
     return render(request, 'search.html', {'posts': posts})
 
+
 class PostListView(ListView):
     model = MyBoard
     template_name = 'post_list.html'
@@ -334,7 +337,7 @@ class PostListView(ListView):
         else:
             queryset = MyBoard.objects.all()
         return queryset
-    
+
 def result(request):
     query = request.GET.get('query')
 
@@ -345,4 +348,3 @@ def result(request):
         posts = MyBoard.objects.all()
 
     return render(request, 'result.html', {'posts':posts})
-    

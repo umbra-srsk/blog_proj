@@ -204,6 +204,8 @@
             type: "POST",
             data: JSON.stringify(data),
             contentType: "application/json",
+            async: false,
+            timeout : 5000,
 
             beforeSend: function() {
                 $("#loading-message").show();
